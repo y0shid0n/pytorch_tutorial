@@ -1,7 +1,7 @@
 # pytorch_tutorial
 pytorchのべんきょう
 
-かんきょう: python3.7 + cuda10.2 + pytorch1.5.0
+かんきょう: windows10 + python3.7 + cuda10.2 + pytorch1.5.0
 
 さんこう: pytorchで学ぶニューラルネットワークと深層学習
 
