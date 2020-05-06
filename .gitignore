@@ -2,3 +2,5 @@
 .ipynb_checkpoints/
 data/*
 !data/.gitkeep
+output/*
+!output/.gitkeep
