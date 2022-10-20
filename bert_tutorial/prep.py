@@ -42,6 +42,12 @@ for filename in tqdm(file_list):
             sent = "。\n".join(sent.split('。'))
             for _s in sent.split('\n'):
                 corpus.append(_s)
+
+# NSP用に出力
+with open('./data/corpus_nsp.txt', 'w', encoding='utf-8') as w:
+    w.write("\n".join(corpus))
+
+# 空行を除く
 corpus = list(filter(("").__ne__, corpus))
 
 with open('./data/corpus.txt', 'w', encoding='utf-8') as w:
