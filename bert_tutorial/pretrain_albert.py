@@ -17,7 +17,8 @@ print(tokenizer.vocab_size)
 print(tokenizer.all_special_tokens)
 
 # config = AlbertConfig(vocab_size=vocab_size+3, embedding_size=256, num_hidden_layers=12, intermediate_size=768, num_attention_heads=12)
-config = AlbertConfig(vocab_size=vocab_size+3, embedding_size=256)
+# num_attention_headsがよくないっぽい（よくわかってない）
+config = AlbertConfig(vocab_size=vocab_size+3, embedding_size=256, intermediate_size=768)
 model = AlbertForMaskedLM(config)
 
 #####
