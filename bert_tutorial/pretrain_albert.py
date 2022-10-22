@@ -1,9 +1,7 @@
 from transformers import AlbertTokenizer, AlbertConfig, AlbertForMaskedLM
 from transformers import DataCollatorForLanguageModeling
 from transformers import TrainingArguments, Trainer
-from transformers import LineByLineTextDataset
 from datasets import load_dataset
-import GPUtil
 import torch
 
 txt_dir = "./data/"
@@ -21,39 +19,37 @@ print(tokenizer.all_special_tokens)
 config = AlbertConfig(vocab_size=vocab_size+3, embedding_size=256, intermediate_size=768)
 model = AlbertForMaskedLM(config)
 
-#####
 # datasetsを使った読み込み（たぶんこれでいけるはず）
-# def tokenize_function(examples):
-#     # Remove empty lines
-#     examples["text"] = [
-#         line for line in examples["text"] if len(line) > 0 and not line.isspace()
-#     ]
-#     return tokenizer(
-#         examples["text"],
-#         padding=False,
-#         truncation=True,
-#         max_length=256,  # from_pretrainedのmax_lengthと揃えた
-#         return_special_tokens_mask=True,
-#     )
-# # とりあえずsplitはしない
-# raw_datasets = load_dataset("text", data_files="./data/corpus.txt")
-# tokenized_datasets = raw_datasets.map(
-#     tokenize_function,
-#     batched=True,
-#     num_proc=None,
-#     remove_columns=["text"],
-#     load_from_cache_file=True,
-#     desc="Running tokenizer on dataset line_by_line",
-# )
-# dataset = tokenized_datasets["train"]
-#####
+def tokenize_function(examples):
+    # Remove empty lines
+    examples["text"] = [
+        line for line in examples["text"] if len(line) > 0 and not line.isspace()
+    ]
+    return tokenizer(
+        examples["text"],
+        padding=False,
+        truncation=True,
+        max_length=256,  # from_pretrainedのmax_lengthと揃えた
+        return_special_tokens_mask=True,
+    )
+# とりあえずsplitはしない
+raw_datasets = load_dataset("text", data_files="./data/corpus.txt")
+tokenized_datasets = raw_datasets.map(
+    tokenize_function,
+    batched=True,
+    num_proc=None,
+    remove_columns=["text"],
+    load_from_cache_file=True,
+    desc="Running tokenizer on dataset line_by_line",
+)
+dataset = tokenized_datasets["train"]
 
 # とりあえずこれで試す
-dataset = LineByLineTextDataset(
-     tokenizer=tokenizer,
-     file_path=f'{txt_dir}corpus.txt',
-     block_size=256, # tokenizerのmax_length
-)
+# dataset = LineByLineTextDataset(
+#      tokenizer=tokenizer,
+#      file_path=f'{txt_dir}corpus.txt',
+#      block_size=256, # tokenizerのmax_length
+# )
 
 data_collator = DataCollatorForLanguageModeling(
     tokenizer=tokenizer, mlm=True, mlm_probability=0.15
@@ -62,7 +58,7 @@ data_collator = DataCollatorForLanguageModeling(
 training_args = TrainingArguments(
     output_dir= f'{model_dir}SousekiALBERT/',
     overwrite_output_dir=True,
-    num_train_epochs=1,
+    num_train_epochs=10,
     per_device_train_batch_size=8,
     save_steps=10000,
     save_total_limit=2,
@@ -78,4 +74,11 @@ trainer = Trainer(
 
 # GPUのメモリが足らんぽい（途中でout of memoryで死ぬ）
 trainer.train()
+# 途中から再開する場合
+# trainer.train(resume_from_checkpoint=True)
+
 trainer.save_model(f'{model_dir}SousekiAlBERT/')
+
+# メモリを空ける
+del trainer
+torch.cuda.empty_cache()
