@@ -1,3 +1,5 @@
+# MLMのみの学習（NSPはやらない）
+
 from transformers import AlbertTokenizer
 from transformers import BertConfig
 from transformers import BertForMaskedLM
@@ -6,6 +8,7 @@ from transformers import DataCollatorForLanguageModeling
 from transformers import TrainingArguments, Trainer
 from sentencepiece import SentencePieceProcessor
 from datasets import load_dataset
+import torch
 
 txt_dir = "./data/"
 model_dir = "./model/"
@@ -50,6 +53,10 @@ model = BertForMaskedLM(config)
 #####
 # datasetsを使った読み込み（たぶんこれでいけるはず）
 def tokenize_function(examples):
+    # Remove empty lines
+    examples["text"] = [
+        line for line in examples["text"] if len(line) > 0 and not line.isspace()
+    ]
     return tokenizer(
         examples["text"],
         padding=False,
@@ -94,4 +101,11 @@ trainer = Trainer(
 )
 
 trainer.train()
+# 途中から再開する場合
+# trainer.train(resume_from_checkpoint=True)
+
 trainer.save_model(f'{model_dir}SousekiBERTtest/')
+
+# メモリを空ける
+del trainer
+torch.cuda.empty_cache()
