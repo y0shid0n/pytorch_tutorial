@@ -1,12 +1,16 @@
 from transformers import pipeline
 from transformers import AlbertTokenizer
 from transformers import BertForMaskedLM
+from transformers import AlbertForMaskedLM
+from transformers import RobertaForMaskedLM
 
 model_dir = "./model/"
 
 # futurewarning出てる。deprecated
 tokenizer = AlbertTokenizer.from_pretrained(f'{model_dir}SousekiSP/souseki_sentencepiece.model', keep_accents=True)
 model = BertForMaskedLM.from_pretrained(f'{model_dir}SousekiBERT')
+model = RobertaForMaskedLM.from_pretrained(f'{model_dir}SousekiRoBERTa')
+# model = AlbertForMaskedLM.from_pretrained(f'{model_dir}SousekiALBERT')
 
 fill_mask = pipeline(
     "fill-mask",
