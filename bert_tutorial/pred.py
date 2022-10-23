@@ -3,6 +3,7 @@ from transformers import AlbertTokenizer
 from transformers import BertForMaskedLM
 from transformers import AlbertForMaskedLM
 from transformers import RobertaForMaskedLM
+from transformers import ElectraForMaskedLM
 
 model_dir = "./model/"
 
@@ -11,6 +12,7 @@ tokenizer = AlbertTokenizer.from_pretrained(f'{model_dir}SousekiSP/souseki_sente
 model = BertForMaskedLM.from_pretrained(f'{model_dir}SousekiBERT')
 model = RobertaForMaskedLM.from_pretrained(f'{model_dir}SousekiRoBERTa')
 # model = AlbertForMaskedLM.from_pretrained(f'{model_dir}SousekiALBERT')
+model = ElectraForMaskedLM.from_pretrained(f'{model_dir}SousekiELECTRA')
 
 fill_mask = pipeline(
     "fill-mask",
