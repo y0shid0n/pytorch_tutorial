@@ -44,10 +44,10 @@ data_collator = DataCollatorForLanguageModeling(
 )
 
 training_args = TrainingArguments(
-    output_dir=f"{model_dir}/SousekiELECRA/",
+    output_dir=f"{model_dir}/SousekiELECTRA/",
     overwrite_output_dir=True,
-    num_train_epochs=10,
-    per_device_train_batch_size=32,
+    num_train_epochs=40,
+    per_device_train_batch_size=48,
     save_steps=10000,
     save_total_limit=2,
 )
@@ -63,7 +63,7 @@ trainer.train()
 # 途中から再開する場合
 # trainer.train(resume_from_checkpoint=True)
 
-trainer.save_model(f'{model_dir}SousekiELECRA/')
+trainer.save_model(f'{model_dir}SousekiELECTRA/')
 
 # メモリを空ける
 del trainer, dataset, model
