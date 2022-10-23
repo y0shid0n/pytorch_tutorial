@@ -15,6 +15,8 @@ print(tokenizer.convert_ids_to_tokens(tokenizer("吾輩は猫である")['input_
 print(tokenizer.vocab_size)
 print(tokenizer.all_special_tokens)
 
+# max_position_embeddingsは+2した方がいい？
+# https://qiita.com/m__k/items/34671ffefba4414d0369
 config = RobertaConfig(vocab_size=vocab_size+3, num_hidden_layers=12, intermediate_size=768)
 model = RobertaForMaskedLM(config)
 
